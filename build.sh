@@ -3,7 +3,7 @@ set -e
 
 STAMP='default'
 SERVER_VERSION='1.5.2'
-WEBSITE_VERSION='0.6.12'
+WEBSITE_VERSION='0.6.18'
 LIBRARY_VERSION='0.10.13'
 
 usage() {
@@ -35,11 +35,14 @@ set -o verbose # Keep this after the usage message to reduce clutter.
 perl -pne "s/<SERVER_VERSION>/$SERVER_VERSION/g; s/<WEBSITE_VERSION>/$WEBSITE_VERSION/g; s/<LIBRARY_VERSION>/$LIBRARY_VERSION/g" \
           web-context/Dockerfile.template > web-context/Dockerfile
 
-REPO=gehlenborglab/higlass
+cp ~/projects/higlass/dist/scripts/hglib.js web-context/higlass/dist/scripts/hglib.js
+cp ~/projects/higlass/dist/styles/hglib.css web-context/higlass/dist/styles/hglib.css
+
+REPO=pkerpedjiev/accion
 docker pull $REPO # Defaults to "latest", but just speeds up the build, so precise version doesn't matter.
 docker build --cache-from $REPO \
              --build-arg WORKERS=$WORKERS \
-             --tag image-$STAMP \
+             --tag hg-accion-image-$STAMP \
              web-context
 
 rm web-context/Dockerfile # Ephemeral: We want to prevent folks from editing it by mistake.

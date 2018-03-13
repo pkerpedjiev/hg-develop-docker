@@ -67,19 +67,12 @@ RUN unzip dist.zip -d higlass-website
 
 RUN pwd
 
-RUN sed -i -e s#assets/styles-third-party/hglib.css#https://unpkg.com/higlass@<LIBRARY_VERSION>/dist/styles/hglib.css#g higlass-website/index.html;
-RUN sed -i -e s#assets/styles-third-party/hglib.css#https://unpkg.com/higlass@<LIBRARY_VERSION>/dist/styles/hglib.css#g higlass-website/app/index.html;
-RUN sed -i -e s#assets/styles-third-party/hglib.css#https://unpkg.com/higlass@<LIBRARY_VERSION>/dist/styles/hglib.css#g higlass-website/demo.html;
-RUN sed -i -e s#assets/styles-third-party/hglib.css#https://unpkg.com/higlass@<LIBRARY_VERSION>/dist/styles/hglib.css#g higlass-website/test_demo.html;
-
-RUN sed -i -e s#assets/scripts-third-party/hglib.js#https://unpkg.com/higlass@<LIBRARY_VERSION>/dist/scripts/hglib.js#g higlass-website/index.html;
-RUN sed -i -e s#assets/scripts-third-party/hglib.js#https://unpkg.com/higlass@<LIBRARY_VERSION>/dist/scripts/hglib.js#g higlass-website/app/index.html;
-RUN sed -i -e s#assets/scripts-third-party/hglib.js#https://unpkg.com/higlass@<LIBRARY_VERSION>/dist/scripts/hglib.js#g higlass-website/demo.html;
-RUN sed -i -e s#assets/scripts-third-party/hglib.js#https://unpkg.com/higlass@<LIBRARY_VERSION>/dist/scripts/hglib.js#g higlass-website/test_demo.html;
+COPY higlass/dist/scripts/hglib.js higlass-website/assets/scripts-third-party
+COPY higlass/dist/styles/hglib.css higlass-website/assets/styles-third-party
 
 RUN ( echo "SERVER_VERSION: <SERVER_VERSION>"; \
       echo "WEBSITE_VERSION: <WEBSITE_VERSION>"; \
-      echo "LIBRARY_VERSION: <LIBRARY_VERSION>"; \
+      echo "LIBRARY_VERSION: develop"; \
       ) \
     > higlass-website/version.txt
 
