@@ -8624,6 +8624,7 @@ var TiledPixiTrack = exports.TiledPixiTrack = function (_PixiTrack) {
       _this.options.name = _this.options.name ? _this.options.name : tilesetInfo.name;
 
       _this.draw();
+      _this.drawLabel();
       _this.animate();
     });
 
@@ -13796,6 +13797,7 @@ var HorizontalLine1DPixiTrack = exports.HorizontalLine1DPixiTrack = function (_H
     key: 'rerender',
     value: function () {
       function rerender(options) {
+        _get(HorizontalLine1DPixiTrack.prototype.__proto__ || Object.getPrototypeOf(HorizontalLine1DPixiTrack.prototype), 'rerender', this).call(this, options);
         this.options = options;
 
         _get(HorizontalLine1DPixiTrack.prototype.__proto__ || Object.getPrototypeOf(HorizontalLine1DPixiTrack.prototype), 'draw', this).call(this);
@@ -36190,8 +36192,6 @@ var SeriesListMenu = exports.SeriesListMenu = function (_ContextMenuContainer2) 
             server: this.props.series.data.children[0].server
           };
 
-          console.log('newData:', newData);
-
           // this track is already being divided
           return _react2['default'].createElement(
             _ContextMenuItem2['default'],
@@ -36310,8 +36310,6 @@ var SeriesListMenu = exports.SeriesListMenu = function (_ContextMenuContainer2) 
             'Replace Series'
           )
         ) : null;
-
-        console.log('series:', this.props.series);
 
         return _react2['default'].createElement(
           'div',
@@ -52758,7 +52756,7 @@ var TrackRenderer = exports.TrackRenderer = function (_React$Component) {
             return new _LeftAxisTrack2['default'](this.svgElement);
 
           case 'top-axis':
-            return new _TopAxisTrack2['default'](this.svgElement);
+            return new _TopAxisTrack2['default'](this.svgElement, track.options);
 
           case 'heatmap':
             return new _HeatmapTiledPixiTrack2['default'](this.pStage, dataConfig, handleTilesetInfoReceived, track.options, function () {
@@ -54333,13 +54331,15 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var TopAxisTrack = exports.TopAxisTrack = function (_SVGTrack) {
   _inherits(TopAxisTrack, _SVGTrack);
 
-  function TopAxisTrack(svgElement) {
+  function TopAxisTrack(svgElement, options) {
     _classCallCheck(this, TopAxisTrack);
 
     var _this = _possibleConstructorReturn(this, (TopAxisTrack.__proto__ || Object.getPrototypeOf(TopAxisTrack)).call(this, svgElement));
 
     _this.axis = (0, _d3Axis.axisTop)(_this._xScale);
     _this.gAxis = _this.gMain.append('g');
+
+    _this.options = options;
 
     // to make sure that the isWaitingOnTiles functions
     // return immediately
@@ -54366,8 +54366,14 @@ var TopAxisTrack = exports.TopAxisTrack = function (_SVGTrack) {
     key: 'draw',
     value: function () {
       function draw() {
-        this.axis.scale(this._xScale);
+        var xDomain = this._xScale.domain();
+        var newScale = this._xScale.copy();
 
+        if (this.options && this.options.start && this.options.scale) {
+          newScale.domain([+this.options.start + this.options.scale * xDomain[0], +this.options.start + this.options.scale * xDomain[1]]);
+        }
+
+        this.axis.scale(newScale);
         this.gAxis.call(this.axis);
 
         return this;
@@ -67717,7 +67723,6 @@ var TilesetFinder = exports.TilesetFinder = function (_React$Component) {
         if (!this.state.selectedUuid) return;
 
         var selectedTilesets = [this.state.options[this.state.selectedUuid]];
-        console.log('selectedTilesets', selectedTilesets);
 
         if (selectedTilesets) {
           this.props.selectedTilesetChanged(selectedTilesets);
@@ -67759,8 +67764,6 @@ var TilesetFinder = exports.TilesetFinder = function (_React$Component) {
           }).join('&');
         }
 
-        console.log('dt:', datatypesQuery);
-
         if (!this.props.trackSourceServers) {
           console.warn("No track source servers specified in the viewconf");
           return;
@@ -67772,7 +67775,6 @@ var TilesetFinder = exports.TilesetFinder = function (_React$Component) {
               console.error('ERROR:', error);
             } else {
               var newOptions = _this3.prepareNewEntries(sourceServer, data.results, _this3.state.options);
-              console.log('newOptions:', newOptions, 'data:', data);
               var availableTilesetKeys = Object.keys(newOptions);
               var selectedUuid = _this3.state.selectedUuid;
 
