@@ -42,7 +42,7 @@ REPO=pkerpedjiev/accion
 docker pull $REPO # Defaults to "latest", but just speeds up the build, so precise version doesn't matter.
 docker build --cache-from $REPO \
              --build-arg WORKERS=$WORKERS \
-             --tag hg-accion-image-$STAMP \
+             --tag hg-develop-image-$STAMP \
              web-context
 
 rm web-context/Dockerfile # Ephemeral: We want to prevent folks from editing it by mistake.

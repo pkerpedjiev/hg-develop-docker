@@ -1,8 +1,31 @@
 # higlass-docker
 
-Builds a docker container wrapping higlass-client and higlass-server in nginx,
-tests that it works, and if there are no errors in the PR, pushes the image to 
+Builds a docker container wrapping the development version of higlass-client
+and higlass-server in nginx, tests that it works, and if there are no errors in
+the PR, pushes the image to
 [DockerHub](https://hub.docker.com/r/gehlenborglab/higlass/).
+
+## Building
+
+To build this container with an arbitrary higlass version, first clone
+the higlass repo into `~/projects/higlass`:
+
+```
+git clone https://github.com/hms-dbmi/higlass ~/projects/higlass
+cd ~/projects/higlass
+git checkout develop
+npm run compile
+
+cd ~/projects/hg-develop-docker
+
+/usr/bin/time ./build.sh -w 2
+
+docker tag hg-develop-image-default pkerpedjiev/hg-develop
+docker push pkerpedjiev/hg-develop
+docker tag hg-develop-image-default pkerpedjiev/hg-develop:latest
+docker push pkerpedjiev/hg-develop:latest
+```
+
 
 ## Running locally
 
